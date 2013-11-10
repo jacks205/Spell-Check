@@ -57,8 +57,20 @@ alphabet = 'abcdefghijklmnopqrstuvwxyz'
 def main():
 	lWords = train(words(file('/usr/share/dict/words').read()))
 	while True:
-		word = raw_input('>')
-		print correct(word.lower(), lWords)
+		try:
+			word = raw_input('>')
+			if not word.isalpha():
+				continue
+			spellchk = correct(word.lower(), lWords)
+			if spellchk == word and spellchk not in lWords[word[0]]:
+				print 'NO SUGGESTION'
+			else:
+				print spellchk
+			print #'\n'
+		except KeyboardInterrupt: #Cleaner way to exit program without a crash
+			break
+		except EOFError:
+			break
 
 
 if __name__ == "__main__":

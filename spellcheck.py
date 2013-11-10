@@ -1,4 +1,6 @@
 import re, collections
+# re - Python Library for Regular Expressions
+# collections - Python Library for High Performance Container Datatypes
 
 # Spell Check program using algorithm originally
 # summarized by Dr. Peter Norvig.
@@ -16,12 +18,15 @@ import re, collections
 def words(text): 
 	return re.findall('[a-z]+', text.lower()) 
 
-#Returns a dictionary with keys->words and values->number of occurences
+#Returning dictionary = {'a':{abbey:1, abbreviated:2}, 'b':{},...,'z':{}}
+#Instead of iterating through the whole dictionary, iteration happens based on first letter
 def train(words):
-    occurences = collections.defaultdict(lambda: 1) #Sets default values in a dictionary, less iteration to check if element is a part of the dictionary
-    for w in words:
-        occurences[w] += 1 #Incrementing occurence of word
-    return occurences
+	occurences = {}
+	for l in alphabet:
+		occurences[l] = collections.defaultdict(lambda: 1) #Sets default values in a dictionary, less iteration to check if element is a part of the dictionary
+	for w in words:
+		occurences[w[0]][w] += 1 #Incrementing occurence of word
+	return occurences
 
 #Edits can be deletion (deletes), swapping adajent letters (transposes), alteration (replaces), or inserting a letter (inserts)
 #Returns a set of of all words one edit away from correct word
@@ -34,26 +39,26 @@ def edits1(word):
 	return set(deletes + transposes + replaces + inserts)
 
 #Returns a set of words with the possible edits
-def known_edits2(word):
-	return set(e2 for e1 in edits1(word) for e2 in edits1(e1) if e2 in lWords)
+def known_edits2(word, wDict):
+	return set(e2 for e1 in edits1(word) for e2 in edits1(e1) if e2 in wDict)
 
 #A known word is most likely to be a word that has a vowel mistyped rather than 2 consonants, probable correct first letter, edit distances of around 1 or 2
-def known(words): 
-	return set(w for w in words if w in lWords)
+def known(word, wDict): 
+	return set(w for w in word if w in wDict)
 
 # Highest Level Method
 # Returns the possible word
-def correct(word):
-	candidates = known([word]) or known(edits1(word)) or known_edits2(word) or [word] # gets a set of words with the shortest edit distance from the typed word.
-	return max(candidates, key=lWords.get) # returning the element of the set with the highest probability of being the correct word
+def correct(word, wDict):
+	candidates = known([word], wDict[word[0]]) or known(edits1(word), wDict[word[0]]) or known_edits2(word, wDict[word[0]]) or [word] # gets a set of words with the shortest edit distance from the typed word.
+	return max(candidates, key=wDict.get) # returning the element of the set with the highest probability of being the correct word
 
 alphabet = 'abcdefghijklmnopqrstuvwxyz'
-lWords = train(words(file('/usr/share/dict/words').read()))
 
 def main():
+	lWords = train(words(file('/usr/share/dict/words').read()))
 	while True:
 		word = raw_input('>')
-		print correct(word.lower())
+		print correct(word.lower(), lWords)
 
 
 if __name__ == "__main__":

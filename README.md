@@ -13,12 +13,19 @@ Your solution should be faster than O(n) per word checked, where n is the length
 
 For example:
 
-> sheeeeep
+<pre><code>> sheeeeep
+
 sheep
+
 > peepple
+
 people
+
 > sheeple
-NO SUGGESTION
+
+NO SUGGESTION</code></pre>
+
+
 The class of spelling mistakes to be corrected is as follows:
 
 + Case (upper/lower) errors: "inSIDE" => "inside"
@@ -32,4 +39,4 @@ Final step: Write a second program that *generates* words with spelling mistakes
 
 Algorithm Source
 ----------------
-Peter Norvig - [How to Write a Spelling Corrector]: http://norvig.com/spell-correct.html
+Peter Norvig - <a href="http://norvig.com/spell-correct.html">How to Write a Spelling Corrector</a>

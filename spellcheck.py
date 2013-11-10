@@ -13,7 +13,7 @@ import re, collections
 # 	-Iteration of all possible outputs, and choosing a word which has the best probability
 
 
-# Returning the words in a list as lower case and defining a word as a list of alphabetic character
+# Returning the words in a list as lower case and defining a word as a list of alphabetic characters
 # Works because the singular version of a word is more probably than the possessive notation (dog, dog's)
 def words(text): 
 	return re.findall('[a-z]+', text.lower()) 

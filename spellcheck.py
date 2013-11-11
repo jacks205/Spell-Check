@@ -13,81 +13,84 @@ from misspell import Misspell
 # 	-The offset probability of the user typing word, x, but initially meant word, y
 # 	-Iteration of all possible outputs, and choosing a word which has the best probability
 
+class SpellCheck:
 
-# Returning the words in a list as lower case and defining a word as a list of alphabetic character
-# Works because the singular version of a word is more probably than the possessive notation (dog, dog's)
-def words(text): 
-	return re.findall('[a-z]+', text.lower()) 
+	alphabet = 'abcdefghijklmnopqrstuvwxyz'
 
-#Returning dictionary = {'a':{abbey:1, abbreviated:2}, 'b':{},...,'z':{}}
-#Instead of iterating through the whole dictionary, iteration happens based on first letter
-def train(words):
-	occurences = {}
-	for l in alphabet:
-		occurences[l] = collections.defaultdict(lambda: 1) #Sets default values in a dictionary, less iteration to check if element is a part of the dictionary
-	for w in words:
-		occurences[w[0]][w] += 1 #Incrementing occurence of word
-	return occurences
+	def __init__(self, path):
+		self.dictPath = path
 
-#Edits can be deletion (deletes), swapping adajent letters (transposes), alteration (replaces), or inserting a letter (inserts)
-#Returns a set of of all words one edit away from correct word
-def edits1(word):
-	splits = [(word[:i], word[i:]) for i in range(len(word) + 1)]
-	deletes = [a + b[1:] for a, b in splits if b]
-	transposes = [a + b[1] + b[0] + b[2:] for a, b in splits if len(b)>1]
-	replaces = [a + c + b[1:] for a, b in splits for c in alphabet if b]
-	inserts = [a + c + b     for a, b in splits for c in alphabet]
-	return set(deletes + transposes + replaces + inserts)
+	# Returning the words in a list as lower case and defining a word as a list of alphabetic character
+	# Works because the singular version of a word is more probably than the possessive notation (dog, dog's)
+	def words(self, text): 
+		return re.findall('[a-z]+', text.lower()) 
 
-#Returns a set of words with the possible edits
-def known_edits2(word, wDict):
-	return set(e2 for e1 in edits1(word) for e2 in edits1(e1) if e2 in wDict)
+	#Returning dictionary = {'a':{abbey:1, abbreviated:2}, 'b':{},...,'z':{}}
+	#Instead of iterating through the whole dictionary, iteration happens based on first letter
+	def train(self, words):
+		occurences = {}
+		for l in self.alphabet:
+			occurences[l] = collections.defaultdict(lambda: 1) #Sets default values in a dictionary, less iteration to check if element is a part of the dictionary
+		for w in words:
+			occurences[w[0]][w] += 1 #Incrementing occurence of word
+		return occurences
 
-#A known word is most likely to be a word that has a vowel mistyped rather than 2 consonants, probable correct first letter, edit distances of around 1 or 2
-def known(word, wDict): 
-	return set(w for w in word if w in wDict)
+	#Edits can be deletion (deletes), swapping adajent letters (transposes), alteration (replaces), or inserting a letter (inserts)
+	#Returns a set of of all words one edit away from correct word
+	def edits1(self, word):
+		splits = [(word[:i], word[i:]) for i in range(len(word) + 1)]
+		deletes = [a + b[1:] for a, b in splits if b]
+		transposes = [a + b[1] + b[0] + b[2:] for a, b in splits if len(b)>1]
+		replaces = [a + c + b[1:] for a, b in splits for c in self.alphabet if b]
+		inserts = [a + c + b     for a, b in splits for c in self.alphabet]
+		return set(deletes + transposes + replaces + inserts)
 
-# Highest Level Method
-# Returns the possible word
-def correct(word, wDict):
-	candidates = known([word], wDict[word[0]]) or known(edits1(word), wDict[word[0]]) or known_edits2(word, wDict[word[0]]) or [word] # gets a set of words with the shortest edit distance from the typed word.
-	return max(candidates, key=wDict.get) # returning the element of the set with the highest probability of being the correct word
+	#Returns a set of words with the possible edits
+	def known_edits2(self, word, wDict):
+		return set(e2 for e1 in self.edits1(word) for e2 in self.edits1(e1) if e2 in wDict)
 
-alphabet = 'abcdefghijklmnopqrstuvwxyz'
+	#A known word is most likely to be a word that has a vowel mistyped rather than 2 consonants, probable correct first letter, edit distances of around 1 or 2
+	def known(self, word, wDict): 
+		return set(w for w in word if w in wDict)
 
-def main():
-	lWords = words(file('/usr/share/dict/words').read())
-	try:
-		if  len(sys.argv) == 1 or sys.argv[1] == '0':
-			lWords = train(lWords)
-			while True:
-				word = raw_input('>')
-				if not word.isalpha():
-					continue
-				spellchk = correct(word.lower(), lWords)
-				if spellchk == word and spellchk not in lWords[word[0]]:
-					print 'NO SUGGESTION'
-				else:
-					print spellchk
-				print #'\n'
-		elif sys.argv[1] == '1':
-			misspell = Misspell(lWords)
-			lWords = train(lWords)
-			while True:
-				word = misspell.genWord()
-				print 'Incorrect -', word
-				spellchk = correct(word, lWords)
-				if spellchk == word and spellchk not in lWords[word[0]]:
-					print 'NO SUGGESTION'
-				else:
-					print 'Correct   -',spellchk
-				print #'\n'
-				raw_input('<enter>\n') #Enter to continue
-	except KeyboardInterrupt: 
-		#Cleaner way to exit program without a crash
-		'exit'
-	except EOFError:
-		'exit'
+	# Highest Level Method
+	# Returns the possible word
+	def correct(self, word, wDict):
+		candidates = self.known([word], wDict[word[0]]) or self.known(self.edits1(word), wDict[word[0]]) or self.known_edits2(word, wDict[word[0]]) or [word] # gets a set of words with the shortest edit distance from the typed word.
+		return max(candidates, key=wDict.get) # returning the element of the set with the highest probability of being the correct word
 
-if __name__ == "__main__":
-	main()
+	
+
+	def run(self, option):
+		lWords = self.words(file(self.dictPath).read())
+		try:
+			if option == '0':
+				lWords = self.train(lWords)
+				while True:
+					word = raw_input('>')
+					if not word.isalpha():
+						continue
+					spellchk = self.correct(word.lower(), lWords)
+					if spellchk == word and spellchk not in lWords[word[0]]:
+						print 'NO SUGGESTION'
+					else:
+						print spellchk
+					print #'\n'
+			elif option == '1':
+				misspell = Misspell(lWords)
+				lWords = self.train(lWords)
+				while True:
+					word = misspell.genWord()
+					print 'Incorrect -', word
+					spellchk = self.correct(word, lWords)
+					if spellchk == word and spellchk not in lWords[word[0]]:
+						print 'NO SUGGESTION'
+					else:
+						print 'Correct   -',spellchk
+					print #'\n'
+					raw_input('<enter>\n') #Enter to continue
+		except KeyboardInterrupt: 
+			#Cleaner way to exit program without a crash
+			'exit'
+		except EOFError:
+			'exit'

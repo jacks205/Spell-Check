@@ -1,6 +1,6 @@
 #Makefile
 
-EXECUTABLE := spellcheck
+EXECUTABLE := __init__
 
 SOURCES := *.py
 
@@ -16,7 +16,6 @@ CC := python
 	$(CC) $(EXECUTABLE).$(EXT) 1
 
 realclean:
-	find . -type f -name "*.o" -exec rm '{}' \;
-	find . -type f -name "*.exe" -exec rm '{}' \;
+	find . -type f -name "*.pyc" -exec rm '{}' \;
 
 # this line required by make - don't delete

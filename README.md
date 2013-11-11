@@ -23,9 +23,11 @@ summarized by Dr. Peter Norvig.
 	additional src: <a href="http://goo.gl/uaJ6DQ">Google Algorithm Paper</a>
 
 The algorithm used has 3 parts:
-	+ The probability of the typed word being correctly typed by the user
-	+ The offset probability of the user typing word, x, but initially meant word, y
-	+ Iteration of all possible outputs, and choosing a word which has the best probability
++ The probability of the typed word being correctly typed by the user
++ The offset probability of the user typing word, x, but initially meant word, y
++ Iteration of all possible outputs, and choosing a word which has the best probability
+
+My altered algorithm used is faster than <code>O(n)</code> because I shortened the list of possible words based on the first letter. By creating a dictionary ordered by letter, the run time of the program would range closer to <code>O(1/26*n)</code>, where <code>n</code> is the number of words, and <code>1/26</code> stands for the alphabet. If n is a 
 
 
 Main Challenge
@@ -33,7 +35,7 @@ Main Challenge
 
 Write a program that reads a large list of English words (e.g. from /usr/share/dict/words on a unix system) into memory, and then reads words from stdin, and prints either the best spelling suggestion, or "NO SUGGESTION" if no suggestion can be found. The program should print ">" as a prompt before reading each word, and should loop until killed.
 
-Your solution should be faster than O(n) per word checked, where n is the length of the dictionary. That is to say, you can't scan the dictionary every time you want to spellcheck a word.
+Your solution should be faster than <code>O(n)</code> per word checked, where n is the length of the dictionary. That is to say, you can't scan the dictionary every time you want to spellcheck a word.
 
 For example:
 

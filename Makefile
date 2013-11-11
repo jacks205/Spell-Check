@@ -4,11 +4,11 @@ EXECUTABLE := spellcheck
 
 SOURCES := *.py
 
-EXT := exe
+EXT := py
 CC := python
 
-all:
-	$(CC) $(SOURCES) -o $(EXECUTABLE).$(EXT)
+py:
+	$(CC) $(SOURCES) $(EXECUTABLE).$(EXT) $(ARG)
 
 realclean:
 	find . -type f -name "*.o" -exec rm '{}' \;

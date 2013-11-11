@@ -1,19 +1,20 @@
-import re, collections
+import re, collections, sys
+from misspell import Misspell
 # re - Python Library for Regular Expressions
 # collections - Python Library for High Performance Container Datatypes
 
 # Spell Check program using algorithm originally
 # summarized by Dr. Peter Norvig.
-#	src: http://norvig.com/spell-correct.html
-#	additional src: http://goo.gl/uaJ6DQ (Google)
-#
+# 	src: http://norvig.com/spell-correct.html
+# 	additional src: http://goo.gl/uaJ6DQ (Google)
+
 # The algorithm used has 3 parts:
-#	-The probability of the typed word being correctly typed by the user
-#	-The offset probability of the user typing word, x, but initially meant word, y
+# 	-The probability of the typed word being correctly typed by the user
+# 	-The offset probability of the user typing word, x, but initially meant word, y
 # 	-Iteration of all possible outputs, and choosing a word which has the best probability
 
 
-# Returning the words in a list as lower case and defining a word as a list of alphabetic characters
+# Returning the words in a list as lower case and defining a word as a list of alphabetic character
 # Works because the singular version of a word is more probably than the possessive notation (dog, dog's)
 def words(text): 
 	return re.findall('[a-z]+', text.lower()) 
@@ -55,23 +56,38 @@ def correct(word, wDict):
 alphabet = 'abcdefghijklmnopqrstuvwxyz'
 
 def main():
-	lWords = train(words(file('/usr/share/dict/words').read()))
-	while True:
-		try:
-			word = raw_input('>')
-			if not word.isalpha():
-				continue
-			spellchk = correct(word.lower(), lWords)
-			if spellchk == word and spellchk not in lWords[word[0]]:
-				print 'NO SUGGESTION'
-			else:
-				print spellchk
-			print #'\n'
-		except KeyboardInterrupt: #Cleaner way to exit program without a crash
-			break
-		except EOFError:
-			break
-
+	lWords = words(file('/usr/share/dict/words').read())
+	try:
+		if sys.argv[1] == '0':
+			lWords = train(lWords)
+			while True:
+				word = raw_input('>')
+				if not word.isalpha():
+					continue
+				spellchk = correct(word.lower(), lWords)
+				if spellchk == word and spellchk not in lWords[word[0]]:
+					print 'NO SUGGESTION'
+				else:
+					print spellchk
+				print #'\n'
+		elif sys.argv[1] == '1':
+			misspell = Misspell(lWords)
+			lWords = train(lWords)
+			while True:
+				word = misspell.genWord()
+				print 'Incorrect -', word
+				spellchk = correct(word, lWords)
+				if spellchk == word and spellchk not in lWords[word[0]]:
+					print 'NO SUGGESTION'
+				else:
+					print 'Correct   -',spellchk
+				print #'\n'
+				newWord = raw_input('<enter>\n') #Enter to continue
+	except KeyboardInterrupt: 
+		#Cleaner way to exit program without a crash
+		'exit'
+	except EOFError:
+		'exit'
 
 if __name__ == "__main__":
 	main()

@@ -3,6 +3,18 @@ Spell-Check
 
 Spell Checker in Python
 
+Algorithm
+---------
+Spell Check program using algorithm originally
+summarized by Dr. Peter Norvig.
+	src: <a href="http://norvig.com/spell-correct.html">How to Write a Spelling Corrector</a>
+	additional src: <a href="http://goo.gl/uaJ6DQ">Google Algorithm Paper</a>
+
+The algorithm used has 3 parts:
+	+ The probability of the typed word being correctly typed by the user
+	+ The offset probability of the user typing word, x, but initially meant word, y
+	+ Iteration of all possible outputs, and choosing a word which has the best probability
+
 
 Main Challenge
 --------------

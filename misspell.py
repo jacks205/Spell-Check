@@ -14,6 +14,8 @@ class Misspell:
 #	-inserting a letter (inserts)
 	#Returns a word mispelled
 	def misspelled(self, word):
+		if len(word) == 1:
+			return word
 		vowels = 'aeiouy'
 		consonants = 'bcdfghjklmnpqrstvwxyz'
 		if len(word) < 9:

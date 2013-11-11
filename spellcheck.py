@@ -58,7 +58,7 @@ alphabet = 'abcdefghijklmnopqrstuvwxyz'
 def main():
 	lWords = words(file('/usr/share/dict/words').read())
 	try:
-		if sys.argv[1] == '0':
+		if  len(sys.argv) == 1 or sys.argv[1] == '0':
 			lWords = train(lWords)
 			while True:
 				word = raw_input('>')
@@ -82,7 +82,7 @@ def main():
 				else:
 					print 'Correct   -',spellchk
 				print #'\n'
-				newWord = raw_input('<enter>\n') #Enter to continue
+				raw_input('<enter>\n') #Enter to continue
 	except KeyboardInterrupt: 
 		#Cleaner way to exit program without a crash
 		'exit'
